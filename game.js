@@ -223,7 +223,7 @@ function resetGame() {
     if (currentSpeedEl) currentSpeedEl.textContent = '1x';
     
     foods = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 50; i++) {
         generateFood(i);
     }
     generateObstacles();
@@ -603,7 +603,7 @@ function generateFood(index = 0) {
 }
 
 function generateObstacles() {
-    const numObstacles = 5;
+    const numObstacles = 50;
     for (let i = 0; i < numObstacles; i++) {
         const obs = {
             x: Math.floor(Math.random() * (tileCountX - 2)) + 1,
