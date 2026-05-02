@@ -117,8 +117,8 @@ highScoreEl.textContent = String(highScore).padStart(3, '0');
 // --- Event Listeners ---
 document.addEventListener('keydown', handleKeyDown);
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded and parsed');
+function setupListeners() {
+    console.log('Setting up listeners');
     const startSoloBtn = document.getElementById('start-solo-btn');
     const startMultiBtn = document.getElementById('start-multi-btn');
 
@@ -135,7 +135,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     loadLeaderboard();
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupListeners);
+} else {
+    setupListeners();
+}
 
 // --- Game Loop ---
 function gameLoop() {
