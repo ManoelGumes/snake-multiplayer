@@ -32,7 +32,11 @@ app.get('/firebase-config.js', (req, res) => {
 });
 
 let players = {};
-let food = { x: 10, y: 10 };
+let foods = [
+    { x: 10, y: 10 },
+    { x: 25, y: 15 },
+    { x: 5, y: 35 }
+];
 const gridSize = 20;
 const tileCountX = 20;
 const tileCountY = 20;
@@ -54,7 +58,7 @@ io.on('connection', (socket) => {
     };
 
     // Send current game state to the new player
-    socket.emit('init', { players, food });
+    socket.emit('init', { players, foods });
     
     // Broadcast to others that a new player joined
     socket.broadcast.emit('playerJoined', players[socket.id]);
@@ -91,12 +95,14 @@ io.on('connection', (socket) => {
     });
 
     // Handle food collection
-    socket.on('eatFood', () => {
-        food = {
-            x: Math.floor(Math.random() * tileCountX),
-            y: Math.floor(Math.random() * tileCountY)
-        };
-        io.emit('newFood', food);
+    socket.on('eatFood', (index) => {
+        if (foods[index]) {
+            foods[index] = {
+                x: Math.floor(Math.random() * tileCountX),
+                y: Math.floor(Math.random() * tileCountY)
+            };
+            io.emit('newFoods', foods);
+        }
     });
 
     // Handle disconnection
