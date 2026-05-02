@@ -69,6 +69,24 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Handle player death
+    socket.on('playerDied', () => {
+        console.log('Player died:', socket.id);
+        if (players[socket.id]) {
+            players[socket.id].active = false;
+            
+            let winner = null;
+            for (let id in players) {
+                if (id !== socket.id && players[id].active) {
+                    winner = players[id];
+                    break;
+                }
+            }
+            
+            io.emit('gameOver', { winner: winner ? winner.name : 'Ninguém' });
+        }
+    });
+
     // Handle food collection
     socket.on('eatFood', () => {
         food = {
