@@ -223,7 +223,7 @@ function resetGame() {
     if (currentSpeedEl) currentSpeedEl.textContent = '1x';
     
     foods = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 5; i++) {
         generateFood(i);
     }
     generateObstacles();
@@ -375,7 +375,7 @@ function draw() {
     ctx.lineWidth = 10;
     ctx.shadowColor = '#ff0055';
     ctx.shadowBlur = 20;
-    ctx.strokeRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+    ctx.strokeRect(5, 5, WORLD_WIDTH - 10, WORLD_HEIGHT - 10);
     ctx.shadowBlur = 15; // Restore default blur
 
     // Draw Obstacles
