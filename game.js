@@ -313,12 +313,16 @@ function update() {
     
     if (distToFood < gridSize) {
         score += 10;
+        updateScore();
+        
+        food = null; // Clear instantly to avoid double collision!
+        
         if (gameMode === 'multi' && socket) {
             socket.emit('eatFood');
         } else {
             generateFood();
         }
-        food = null; // Clear instantly to avoid double collision!
+        
         checkSpeedProgression();
         snakeLength++;
     }
