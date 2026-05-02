@@ -304,6 +304,8 @@ function update() {
     }
 
     // Collision Detection (Food)
+    if (!food) return;
+    
     const foodCenterX = food.x * gridSize + gridSize / 2;
     const foodCenterY = food.y * gridSize + gridSize / 2;
     const distToFood = Math.hypot(head.x - foodCenterX, head.y - foodCenterY);
@@ -358,18 +360,20 @@ function draw() {
     });
 
     // Draw Food
-    const foodCenterX = food.x * gridSize + gridSize / 2;
-    const foodCenterY = food.y * gridSize + gridSize / 2;
-    const foodRadius = gridSize / 2 - 3;
-    ctx.shadowColor = COLORS.food;
-    ctx.beginPath();
-    ctx.arc(foodCenterX, foodCenterY, foodRadius, 0, Math.PI * 2);
-    const foodGradient = ctx.createRadialGradient(foodCenterX - foodRadius/3, foodCenterY - foodRadius/3, 1, foodCenterX, foodCenterY, foodRadius);
-    foodGradient.addColorStop(0, '#fff');
-    foodGradient.addColorStop(0.3, '#80f2ff');
-    foodGradient.addColorStop(1, COLORS.food);
-    ctx.fillStyle = foodGradient;
-    ctx.fill();
+    if (food) {
+        const foodCenterX = food.x * gridSize + gridSize / 2;
+        const foodCenterY = food.y * gridSize + gridSize / 2;
+        const foodRadius = gridSize / 2 - 3;
+        ctx.shadowColor = COLORS.food;
+        ctx.beginPath();
+        ctx.arc(foodCenterX, foodCenterY, foodRadius, 0, Math.PI * 2);
+        const foodGradient = ctx.createRadialGradient(foodCenterX - foodRadius/3, foodCenterY - foodRadius/3, 1, foodCenterX, foodCenterY, foodRadius);
+        foodGradient.addColorStop(0, '#fff');
+        foodGradient.addColorStop(0.3, '#80f2ff');
+        foodGradient.addColorStop(1, COLORS.food);
+        ctx.fillStyle = foodGradient;
+        ctx.fill();
+    }
 
     // Draw All Other Players
     if (gameMode === 'multi' && myPlayerId) {
