@@ -14,8 +14,11 @@ const leaderboardListEl = document.getElementById('leaderboard-list');
 
 // Grid and Game Settings
 const gridSize = 20;
-let tileCountX = Math.floor(canvas.width / gridSize);
-let tileCountY = Math.floor(canvas.height / gridSize);
+const WORLD_WIDTH = 3000;
+const WORLD_HEIGHT = 3000;
+let tileCountX = Math.floor(WORLD_WIDTH / gridSize);
+let tileCountY = Math.floor(WORLD_HEIGHT / gridSize);
+let camera = { x: 0, y: 0 };
 
 function resizeCanvas() {
     const headerEl = document.querySelector('header');
@@ -262,6 +265,10 @@ function update() {
     head.x += velocity.x;
     head.y += velocity.y;
     
+    // Update camera to center on head
+    camera.x = head.x - canvas.width / 2;
+    camera.y = head.y - canvas.height / 2;
+    
     pathHistory.unshift({ x: head.x, y: head.y });
     if (pathHistory.length > snakeLength * spacingIndexDiff) {
         pathHistory.pop();
@@ -358,6 +365,9 @@ function update() {
 function draw() {
     ctx.fillStyle = COLORS.bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.translate(-camera.x, -camera.y);
 
     ctx.strokeStyle = COLORS.grid;
     ctx.lineWidth = 0.5;
@@ -530,6 +540,8 @@ function draw() {
             ctx.shadowBlur = 15;
         }
     }
+    
+    ctx.restore(); // Restore for UI
     ctx.shadowBlur = 0;
 }
 
