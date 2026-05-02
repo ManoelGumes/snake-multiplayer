@@ -318,6 +318,7 @@ function update() {
         } else {
             generateFood();
         }
+        food = null; // Clear instantly to avoid double collision!
         checkSpeedProgression();
         snakeLength++;
     }
@@ -397,6 +398,15 @@ function draw() {
                 const centerY = part.y;
                 const radius = gridSize / 2 - (isHead ? 0 : 1);
 
+                if (isHead) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.shadowBlur = 0;
+                    ctx.fillText(p.name || 'Anônimo', centerX, centerY - radius - 5);
+                    ctx.shadowBlur = 15;
+                }
+
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                 
@@ -434,6 +444,14 @@ function draw() {
         ctx.shadowColor = COLORS.snake;
         
         if (isHead) {
+            // Draw name
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowBlur = 0;
+            ctx.fillText(username, centerX, centerY - radius - 5);
+            ctx.shadowBlur = 15;
+
             const mouthAngle = 0.25 * Math.PI * (0.5 + 0.5 * Math.sin(Date.now() / 100));
             let baseAngle = 0;
             if (velocity.x > 0) baseAngle = 0;
