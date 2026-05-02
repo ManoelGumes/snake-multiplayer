@@ -50,6 +50,7 @@ let gameMode = 'solo'; // 'solo' or 'multi'
 let myPlayerId = null;
 let players = {}; // Stores all players in the session
 let otherPlayerSnake = null; // For 2-player mode
+let mousePos = { x: 0, y: 0 }; // For Slither.io style controls
 
 function initMultiplayer() {
     if (gameMode !== 'multi') return;
@@ -134,6 +135,12 @@ function setupListeners() {
     } else {
         console.error('start-multi-btn not found!');
     }
+    
+    // Add mouse move listener for Slither.io controls
+    window.addEventListener('mousemove', (e) => {
+        mousePos.x = e.clientX;
+        mousePos.y = e.clientY;
+    });
     
     loadLeaderboard();
 }
@@ -231,7 +238,17 @@ function update() {
         if (obs.y < 0 || obs.y >= tileCountY - 1) obs.vy *= -1;
     });
 
-    velocity = nextVelocity;
+    // Calculate angle towards mouse
+    const dx = mousePos.x - head.x;
+    const dy = mousePos.y - head.y;
+    const angle = Math.atan2(dy, dx);
+    
+    // Update velocity based on angle
+    velocity = {
+        x: Math.cos(angle) * baseSpeed,
+        y: Math.sin(angle) * baseSpeed
+    };
+    
     head.x += velocity.x;
     head.y += velocity.y;
     
@@ -508,18 +525,6 @@ function draw() {
 
 function handleKeyDown(e) {
     switch (e.key) {
-        case 'ArrowUp': case 'w': case 'W':
-            if (velocity.y === 0) nextVelocity = { x: 0, y: -baseSpeed };
-            break;
-        case 'ArrowDown': case 's': case 'S':
-            if (velocity.y === 0) nextVelocity = { x: 0, y: baseSpeed };
-            break;
-        case 'ArrowLeft': case 'a': case 'A':
-            if (velocity.x === 0) nextVelocity = { x: -baseSpeed, y: 0 };
-            break;
-        case 'ArrowRight': case 'd': case 'D':
-            if (velocity.x === 0) nextVelocity = { x: baseSpeed, y: 0 };
-            break;
         case ' ': e.preventDefault(); break;
         case 'Enter': e.preventDefault(); break;
     }
