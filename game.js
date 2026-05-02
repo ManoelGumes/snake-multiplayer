@@ -202,7 +202,10 @@ function startGame() {
 
 function resetGame() {
     baseSpeed = 1.5;
-    head = { x: 10 * gridSize, y: 10 * gridSize };
+    head = {
+        x: Math.floor(Math.random() * (tileCountX - 4) + 2) * gridSize,
+        y: Math.floor(Math.random() * (tileCountY - 4) + 2) * gridSize
+    };
     velocity = { x: baseSpeed, y: 0 };
     nextVelocity = { x: baseSpeed, y: 0 };
     score = 0;
@@ -241,12 +244,19 @@ function update() {
     // Calculate angle towards mouse
     const dx = mousePos.x - head.x;
     const dy = mousePos.y - head.y;
-    const angle = Math.atan2(dy, dx);
+    const targetAngle = Math.atan2(dy, dx);
+    const currentAngle = Math.atan2(velocity.y, velocity.x);
     
-    // Update velocity based on angle
+    let angleDiff = targetAngle - currentAngle;
+    while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+    while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+    
+    const turnRate = 0.1; // Turn rate limit
+    const newAngle = currentAngle + Math.min(Math.max(angleDiff, -turnRate), turnRate);
+    
     velocity = {
-        x: Math.cos(angle) * baseSpeed,
-        y: Math.sin(angle) * baseSpeed
+        x: Math.cos(newAngle) * baseSpeed,
+        y: Math.sin(newAngle) * baseSpeed
     };
     
     head.x += velocity.x;
