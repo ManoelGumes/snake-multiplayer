@@ -14,8 +14,8 @@ const leaderboardListEl = document.getElementById('leaderboard-list');
 
 // Grid and Game Settings
 const gridSize = 20;
-const WORLD_WIDTH = 3000;
-const WORLD_HEIGHT = 3000;
+const WORLD_WIDTH = 5000;
+const WORLD_HEIGHT = 5000;
 let tileCountX = Math.floor(WORLD_WIDTH / gridSize);
 let tileCountY = Math.floor(WORLD_HEIGHT / gridSize);
 let camera = { x: 0, y: 0 };
@@ -260,12 +260,12 @@ function update() {
         socket.emit('update', { head: head, pathHistory: pathHistory, score: score, name: username });
     }
     
-    // Wrap around walls
-    if (head.x < 0) head.x = canvas.width;
-    else if (head.x >= canvas.width) head.x = 0;
+    // Block at world boundaries
+    if (head.x < 0) head.x = 0;
+    else if (head.x >= WORLD_WIDTH) head.x = WORLD_WIDTH - 1;
     
-    if (head.y < 0) head.y = canvas.height;
-    else if (head.y >= canvas.height) head.y = 0;
+    if (head.y < 0) head.y = 0;
+    else if (head.y >= WORLD_HEIGHT) head.y = WORLD_HEIGHT - 1;
 
     // Collision Detection (Self)
     for (let i = spacingIndexDiff * 2; i < pathHistory.length; i += spacingIndexDiff) {
@@ -369,6 +369,14 @@ function draw() {
     }
 
     ctx.shadowBlur = 15;
+
+    // Draw World Border
+    ctx.strokeStyle = '#ff0055'; // Neon pink
+    ctx.lineWidth = 10;
+    ctx.shadowColor = '#ff0055';
+    ctx.shadowBlur = 20;
+    ctx.strokeRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+    ctx.shadowBlur = 15; // Restore default blur
 
     // Draw Obstacles
     obstacles.forEach(obs => {
