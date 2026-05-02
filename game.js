@@ -594,7 +594,11 @@ function isOccupied(x, y) {
         const dist = Math.hypot(cellCenterX - obsCenterX, cellCenterY - obsCenterY);
         if (dist < gridSize) return true;
     }
-    if (food && food.x === x && food.y === y) return true;
+    if (foods) {
+        for (let f of foods) {
+            if (f && f.x === x && f.y === y) return true;
+        }
+    }
     return false;
 }
 
