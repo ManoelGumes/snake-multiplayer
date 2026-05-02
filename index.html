@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Snake | Premium Arcade</title>
+    <meta name="description" content="A modern, colorful Snake game with obstacles, power-ups, and speed progression.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>NEON <span class="accent">SNAKE</span></h1>
+            <div class="scoreboard">
+                <div class="score-item">
+                    <span class="label">PONTOS</span>
+                    <span id="current-score" class="value">000</span>
+                </div>
+                <div class="score-item">
+                    <span class="label">RECORDE</span>
+                    <span id="high-score" class="value">000</span>
+                </div>
+                <div class="score-item">
+                    <span class="label">VELOCIDADE</span>
+                    <span id="current-speed" class="value">1x</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="game-container">
+                <canvas id="game-canvas" width="400" height="400"></canvas>
+                
+                <div id="overlay" class="overlay visible">
+                    <div class="overlay-content">
+                        <h2 id="overlay-title">PRONTO PARA JOGAR?</h2>
+                        <p id="overlay-message">Digite seu nome para entrar no ranking.</p>
+                        
+                        <div class="input-group">
+                            <input type="text" id="username-input" placeholder="Seu Nome" maxlength="10">
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button id="start-solo-btn" class="btn glow-effect">JOGAR SOLO</button>
+                            <button id="start-multi-btn" class="btn glow-effect secondary">JOGAR MULTIPLAYER</button>
+                        </div>
+                        
+                        <div class="leaderboard-container">
+                            <h3>🏆 TOP 5 RANKING</h3>
+                            <ul id="leaderboard-list">
+                                <li>Carregando pontuações...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="legend">
+                <div class="legend-item"><span class="color-box food"></span> Comida</div>
+                <div class="legend-item"><span class="color-box obstacle"></span> Obstáculo</div>
+                <div class="legend-item"><span class="color-box powerup"></span> Power-Up</div>
+            </div>
+            <p>Colete a comida, evite os obstáculos e você mesmo!</p>
+        </footer>
+    </div>
+
+    <!-- Socket.io Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Firebase Config served dynamically -->
+    <script src="/firebase-config.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
