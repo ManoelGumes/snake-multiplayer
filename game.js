@@ -61,6 +61,7 @@ function initMultiplayer() {
         console.log('Connected to server. Initial state received.');
         players = data.players;
         food = data.food;
+        myPlayerId = socket.id; // Set my ID!
     });
 
     socket.on('playerJoined', (player) => {
@@ -69,9 +70,7 @@ function initMultiplayer() {
     });
 
     socket.on('update', (player) => {
-        if (players[player.id]) {
-            players[player.id] = player;
-        }
+        players[player.id] = player; // Add or update!
     });
 
     socket.on('newFood', (newFood) => {
