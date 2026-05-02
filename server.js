@@ -11,6 +11,10 @@ const PORT = process.env.PORT || 40807; // Use the same port as before to match 
 
 app.use(express.static(path.join(__dirname, './')));
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 app.get('/firebase-config.js', (req, res) => {
     res.set('Content-Type', 'application/javascript');
     res.send(`
