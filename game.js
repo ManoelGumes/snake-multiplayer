@@ -49,6 +49,7 @@ let socket = null;
 let gameMode = 'solo'; // 'solo' or 'multi'
 let myPlayerId = null;
 let players = {}; // Stores all players in the session
+let otherPlayerSnake = null; // For 2-player mode
 
 function initMultiplayer() {
     if (gameMode !== 'multi') return;
