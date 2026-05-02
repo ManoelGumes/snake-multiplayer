@@ -32,18 +32,13 @@ app.get('/firebase-config.js', (req, res) => {
 });
 
 let players = {};
-let foods = [
-    { x: 50, y: 50 },
-    { x: 100, y: 150 },
-    { x: 200, y: 50 },
-    { x: 150, y: 200 },
-    { x: 80, y: 80 },
-    { x: 120, y: 120 },
-    { x: 220, y: 220 },
-    { x: 30, y: 180 },
-    { x: 180, y: 30 },
-    { x: 240, y: 10 }
-];
+let foods = [];
+for (let i = 0; i < 50; i++) {
+    foods.push({
+        x: Math.floor(Math.random() * tileCountX),
+        y: Math.floor(Math.random() * tileCountY)
+    });
+}
 const gridSize = 20;
 const tileCountX = 20;
 const tileCountY = 20;
