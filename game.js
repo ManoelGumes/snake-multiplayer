@@ -65,7 +65,7 @@ function initMultiplayer() {
     socket.on('init', (data) => {
         console.log('Connected to server. Initial state received.');
         players = data.players;
-        food = data.food;
+        foods = data.foods;
         myPlayerId = socket.id; // Set my ID!
     });
 
@@ -78,8 +78,8 @@ function initMultiplayer() {
         players[player.id] = player; // Add or update!
     });
 
-    socket.on('newFood', (newFood) => {
-        food = newFood;
+    socket.on('newFoods', (newFoods) => {
+        foods = newFoods;
     });
 
     socket.on('playerLeft', (id) => {
@@ -96,7 +96,7 @@ const spacingIndexDiff = 10;
 let head = { x: 10 * gridSize, y: 10 * gridSize };
 let velocity = { x: 1.5, y: 0 };
 let nextVelocity = { x: 1.5, y: 0 };
-let food = { x: 0, y: 0 };
+let foods = [];
 let obstacles = [];
 let score = 0;
 let highScore = 0;
@@ -222,7 +222,10 @@ function resetGame() {
     if (currentScoreEl) currentScoreEl.textContent = '000';
     if (currentSpeedEl) currentSpeedEl.textContent = '1x';
     
-    generateFood();
+    foods = [];
+    for (let i = 0; i < 3; i++) {
+        generateFood(i);
+    }
     generateObstacles();
 }
 
@@ -317,27 +320,30 @@ function update() {
     }
 
     // Collision Detection (Food)
-    if (!food) return;
+    if (!foods) return;
     
-    const foodCenterX = food.x * gridSize + gridSize / 2;
-    const foodCenterY = food.y * gridSize + gridSize / 2;
-    const distToFood = Math.hypot(head.x - foodCenterX, head.y - foodCenterY);
-    
-    if (distToFood < gridSize) {
-        score += 10;
-        updateScore();
+    foods.forEach((foodItem, index) => {
+        if (!foodItem) return;
+        const foodCenterX = foodItem.x * gridSize + gridSize / 2;
+        const foodCenterY = foodItem.y * gridSize + gridSize / 2;
+        const distToFood = Math.hypot(head.x - foodCenterX, head.y - foodCenterY);
         
-        food = null; // Clear instantly to avoid double collision!
-        
-        if (gameMode === 'multi' && socket) {
-            socket.emit('eatFood');
-        } else {
-            generateFood();
+        if (distToFood < gridSize) {
+            score += 10;
+            updateScore();
+            
+            foods[index] = null; // Clear locally
+            
+            if (gameMode === 'multi' && socket) {
+                socket.emit('eatFood', index);
+            } else {
+                generateFood(index);
+            }
+            
+            checkSpeedProgression();
+            snakeLength++;
         }
-        
-        checkSpeedProgression();
-        snakeLength++;
-    }
+    });
 }
 
 function draw() {
@@ -381,19 +387,22 @@ function draw() {
     });
 
     // Draw Food
-    if (food) {
-        const foodCenterX = food.x * gridSize + gridSize / 2;
-        const foodCenterY = food.y * gridSize + gridSize / 2;
-        const foodRadius = gridSize / 2 - 3;
-        ctx.shadowColor = COLORS.food;
-        ctx.beginPath();
-        ctx.arc(foodCenterX, foodCenterY, foodRadius, 0, Math.PI * 2);
-        const foodGradient = ctx.createRadialGradient(foodCenterX - foodRadius/3, foodCenterY - foodRadius/3, 1, foodCenterX, foodCenterY, foodRadius);
-        foodGradient.addColorStop(0, '#fff');
-        foodGradient.addColorStop(0.3, '#80f2ff');
-        foodGradient.addColorStop(1, COLORS.food);
-        ctx.fillStyle = foodGradient;
-        ctx.fill();
+    if (foods) {
+        foods.forEach(foodItem => {
+            if (!foodItem) return;
+            const foodCenterX = foodItem.x * gridSize + gridSize / 2;
+            const foodCenterY = foodItem.y * gridSize + gridSize / 2;
+            const foodRadius = gridSize / 2 - 3;
+            ctx.shadowColor = COLORS.food;
+            ctx.beginPath();
+            ctx.arc(foodCenterX, foodCenterY, foodRadius, 0, Math.PI * 2);
+            const foodGradient = ctx.createRadialGradient(foodCenterX - foodRadius/3, foodCenterY - foodRadius/3, 1, foodCenterX, foodCenterY, foodRadius);
+            foodGradient.addColorStop(0, '#fff');
+            foodGradient.addColorStop(0.3, '#80f2ff');
+            foodGradient.addColorStop(1, COLORS.food);
+            ctx.fillStyle = foodGradient;
+            ctx.fill();
+        });
     }
 
     // Draw All Other Players
@@ -542,10 +551,13 @@ function handleKeyDown(e) {
     }
 }
 
-function generateFood() {
+function generateFood(index = 0) {
     const newFood = { x: Math.floor(Math.random() * tileCountX), y: Math.floor(Math.random() * tileCountY) };
-    if (isOccupied(newFood.x, newFood.y)) generateFood();
-    else food = newFood;
+    if (isOccupied(newFood.x, newFood.y)) generateFood(index);
+    else {
+        if (!foods) foods = [];
+        foods[index] = newFood;
+    }
 }
 
 function generateObstacles() {
