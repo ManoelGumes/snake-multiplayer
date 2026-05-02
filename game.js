@@ -274,8 +274,7 @@ function update() {
     }
 
     // Collision Detection (Other Players)
-    if (gameMode === 'multi') {
-        if (!myPlayerId) return; // Wait for ID from server
+    if (gameMode === 'multi' && myPlayerId) {
         for (let id in players) {
             if (id === myPlayerId) continue;
             const p = players[id];
@@ -373,8 +372,7 @@ function draw() {
     ctx.fill();
 
     // Draw All Other Players
-    if (gameMode === 'multi') {
-        if (!myPlayerId) return; // Wait for ID from server
+    if (gameMode === 'multi' && myPlayerId) {
         const colors = ['#bd00ff', '#00e5ff', '#ff0055', '#ffaa00'];
         let colorIndex = 0;
         
