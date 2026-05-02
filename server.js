@@ -45,7 +45,10 @@ io.on('connection', (socket) => {
         id: socket.id,
         name: 'Anônimo',
         active: true,
-        head: { x: 10 * gridSize, y: 10 * gridSize },
+        head: {
+            x: Math.floor(Math.random() * (tileCountX - 4) + 2) * gridSize,
+            y: Math.floor(Math.random() * (tileCountY - 4) + 2) * gridSize
+        },
         pathHistory: [],
         score: 0
     };
