@@ -162,13 +162,24 @@ function gameLoop() {
 // --- Game Logic ---
 function startGame() {
     console.log('startGame called');
-    let username = usernameInputEl.value.trim();
+    const usernameInputEl = document.getElementById('username-input');
+    const overlayMessageEl = document.getElementById('overlay-message');
+    const overlayEl = document.getElementById('overlay');
+    
+    if (!usernameInputEl || !overlayMessageEl || !overlayEl) {
+        console.error('Required UI elements not found!');
+        return;
+    }
+    
+    username = usernameInputEl.value.trim();
+    
     if (username.length < 3) {
         overlayMessageEl.textContent = "O nome deve ter pelo menos 3 caracteres!";
         overlayMessageEl.style.color = "#ff0055";
         return;
     }
     
+    // Reset message style if it was changed by error
     overlayMessageEl.textContent = "Digite seu nome para entrar no ranking.";
     overlayMessageEl.style.color = "var(--text-muted)";
     
@@ -197,8 +208,11 @@ function resetGame() {
         pathHistory.push({ x: head.x - i * velocity.x, y: head.y - i * velocity.y });
     }
     
-    currentScoreEl.textContent = '000';
-    currentSpeedEl.textContent = '1x';
+    const currentScoreEl = document.getElementById('current-score');
+    const currentSpeedEl = document.getElementById('current-speed');
+    
+    if (currentScoreEl) currentScoreEl.textContent = '000';
+    if (currentSpeedEl) currentSpeedEl.textContent = '1x';
     
     generateFood();
     generateObstacles();
