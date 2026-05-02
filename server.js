@@ -33,9 +33,11 @@ app.get('/firebase-config.js', (req, res) => {
 
 let players = {};
 let foods = [
-    { x: 10, y: 10 },
-    { x: 25, y: 15 },
-    { x: 5, y: 35 }
+    { x: 50, y: 50 },
+    { x: 100, y: 150 },
+    { x: 200, y: 50 },
+    { x: 150, y: 200 },
+    { x: 80, y: 80 }
 ];
 const gridSize = 20;
 const tileCountX = 20;
