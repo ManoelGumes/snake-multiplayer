@@ -223,7 +223,7 @@ function resetGame() {
     if (currentSpeedEl) currentSpeedEl.textContent = '1x';
     
     foods = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
         generateFood(i);
     }
     generateObstacles();
@@ -358,13 +358,13 @@ function draw() {
     for (let i = 0; i < tileCountX; i++) {
         ctx.beginPath();
         ctx.moveTo(i * gridSize, 0);
-        ctx.lineTo(i * gridSize, canvas.height);
+        ctx.lineTo(i * gridSize, WORLD_HEIGHT);
         ctx.stroke();
     }
     for (let i = 0; i < tileCountY; i++) {
         ctx.beginPath();
         ctx.moveTo(0, i * gridSize);
-        ctx.lineTo(canvas.width, i * gridSize);
+        ctx.lineTo(WORLD_WIDTH, i * gridSize);
         ctx.stroke();
     }
 
@@ -464,6 +464,40 @@ function draw() {
                 ctx.fillStyle = gradient;
                 ctx.fill();
             });
+        }
+    }
+
+    // Find closest food and draw arrow
+    if (foods) {
+        let closestFood = null;
+        let minDist = Infinity;
+        foods.forEach(foodItem => {
+            if (!foodItem) return;
+            const foodCenterX = foodItem.x * gridSize + gridSize / 2;
+            const foodCenterY = foodItem.y * gridSize + gridSize / 2;
+            const dist = Math.hypot(head.x - foodCenterX, head.y - foodCenterY);
+            if (dist < minDist) {
+                minDist = dist;
+                closestFood = foodItem;
+            }
+        });
+        
+        if (closestFood) {
+            const foodCenterX = closestFood.x * gridSize + gridSize / 2;
+            const foodCenterY = closestFood.y * gridSize + gridSize / 2;
+            const angle = Math.atan2(foodCenterY - head.y, foodCenterX - head.x);
+            
+            ctx.save();
+            ctx.translate(head.x, head.y);
+            ctx.rotate(angle);
+            ctx.beginPath();
+            ctx.moveTo(30, 0); // Distance from head
+            ctx.lineTo(20, -5);
+            ctx.lineTo(20, 5);
+            ctx.closePath();
+            ctx.fillStyle = '#00e5ff'; // Same as food
+            ctx.fill();
+            ctx.restore();
         }
     }
 
