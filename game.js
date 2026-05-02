@@ -139,12 +139,6 @@ function setupListeners() {
         console.error('start-multi-btn not found!');
     }
     
-    // Add mouse move listener for Slither.io controls
-    window.addEventListener('mousemove', (e) => {
-        mousePos.x = e.clientX;
-        mousePos.y = e.clientY;
-    });
-    
     loadLeaderboard();
 }
 
@@ -244,23 +238,7 @@ function update() {
         if (obs.y < 0 || obs.y >= tileCountY - 1) obs.vy *= -1;
     });
 
-    // Calculate angle towards mouse
-    const dx = mousePos.x - head.x;
-    const dy = mousePos.y - head.y;
-    const targetAngle = Math.atan2(dy, dx);
-    const currentAngle = Math.atan2(velocity.y, velocity.x);
-    
-    let angleDiff = targetAngle - currentAngle;
-    while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-    while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-    
-    const turnRate = 0.1; // Turn rate limit
-    const newAngle = currentAngle + Math.min(Math.max(angleDiff, -turnRate), turnRate);
-    
-    velocity = {
-        x: Math.cos(newAngle) * baseSpeed,
-        y: Math.sin(newAngle) * baseSpeed
-    };
+    velocity = nextVelocity;
     
     head.x += velocity.x;
     head.y += velocity.y;
@@ -547,6 +525,18 @@ function draw() {
 
 function handleKeyDown(e) {
     switch (e.key) {
+        case 'ArrowUp': case 'w': case 'W':
+            if (velocity.y === 0) nextVelocity = { x: 0, y: -baseSpeed };
+            break;
+        case 'ArrowDown': case 's': case 'S':
+            if (velocity.y === 0) nextVelocity = { x: 0, y: baseSpeed };
+            break;
+        case 'ArrowLeft': case 'a': case 'A':
+            if (velocity.x === 0) nextVelocity = { x: -baseSpeed, y: 0 };
+            break;
+        case 'ArrowRight': case 'd': case 'D':
+            if (velocity.x === 0) nextVelocity = { x: baseSpeed, y: 0 };
+            break;
         case ' ': e.preventDefault(); break;
         case 'Enter': e.preventDefault(); break;
     }
