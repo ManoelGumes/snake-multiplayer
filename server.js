@@ -86,9 +86,9 @@ io.on('connection', (socket) => {
             const p = players[socket.id];
             p.active = false;
             
-            // Spawn food from body (50% of segments)
+            // Spawn food from body (10% of segments)
             if (p.pathHistory && p.pathHistory.length > 0) {
-                const numOrbs = Math.floor(p.pathHistory.length * 0.5);
+                const numOrbs = Math.floor(p.pathHistory.length * 0.1);
                 for (let i = 0; i < numOrbs; i++) {
                     const segmentIndex = Math.floor(Math.random() * p.pathHistory.length);
                     const segment = p.pathHistory[segmentIndex];
