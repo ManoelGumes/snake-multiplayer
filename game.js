@@ -78,6 +78,15 @@ function initMultiplayer() {
         if (!players[player.id]) {
             players[player.id] = player;
         } else {
+            // Resize pathHistory to match target length
+            while (players[player.id].pathHistory.length < player.pathHistory.length) {
+                const lastPt = players[player.id].pathHistory[players[player.id].pathHistory.length - 1] || player.head;
+                players[player.id].pathHistory.push({ x: lastPt.x, y: lastPt.y });
+            }
+            while (players[player.id].pathHistory.length > player.pathHistory.length) {
+                players[player.id].pathHistory.pop();
+            }
+            
             players[player.id].targetPathHistory = player.pathHistory;
             players[player.id].score = player.score;
             players[player.id].name = player.name;
