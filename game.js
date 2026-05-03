@@ -348,7 +348,7 @@ function update() {
             const p = players[id];
             if (!p.active || !p.pathHistory) continue;
             
-            for (let j = 0; j < p.pathHistory.length; j += spacingIndexDiff) {
+            for (let j = 0; j < p.pathHistory.length; j++) {
                 const part = p.pathHistory[j];
                 const dist = Math.hypot(head.x - part.x, head.y - part.y);
                 if (dist < gridSize / 2) {
