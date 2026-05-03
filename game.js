@@ -51,6 +51,7 @@ let myPlayerId = null;
 let players = {}; // Stores all players in the session
 let otherPlayerSnake = null; // For 2-player mode
 let mousePos = { x: 0, y: 0 }; // For Slither.io style controls
+let lastEmitTime = 0; // For throttling
 
 function initMultiplayer() {
     if (gameMode !== 'multi') return;
@@ -74,7 +75,15 @@ function initMultiplayer() {
     });
 
     socket.on('update', (player) => {
-        players[player.id] = player; // Add or update!
+        if (!players[player.id]) {
+            players[player.id] = player;
+        } else {
+            players[player.id].targetPathHistory = player.pathHistory;
+            players[player.id].score = player.score;
+            players[player.id].name = player.name;
+            players[player.id].active = player.active;
+            players[player.id].head = player.head;
+        }
     });
 
     socket.on('newFoods', (newFoods) => {
@@ -280,7 +289,11 @@ function update() {
     
     // Sync to Server
     if (gameMode === 'multi' && socket) {
-        socket.emit('update', { head: head, pathHistory: pathHistory, score: score, name: username });
+        const currentTime = Date.now();
+        if (currentTime - lastEmitTime > 50) { // 20 FPS
+            socket.emit('update', { head: head, pathHistory: pathHistory, score: score, name: username });
+            lastEmitTime = currentTime;
+        }
     }
     
     // Block at world boundaries
@@ -445,6 +458,17 @@ function draw() {
             if (id === myPlayerId) continue;
             const p = players[id];
             if (!p.active || !p.pathHistory) continue;
+            
+            // Interpolate positions for smooth movement
+            if (p.targetPathHistory) {
+                p.pathHistory.forEach((part, index) => {
+                    const targetPart = p.targetPathHistory[index];
+                    if (targetPart) {
+                        part.x += (targetPart.x - part.x) * 0.2;
+                        part.y += (targetPart.y - part.y) * 0.2;
+                    }
+                });
+            }
             
             const pColor = colors[colorIndex % colors.length];
             colorIndex++;

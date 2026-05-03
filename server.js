@@ -88,6 +88,7 @@ io.on('connection', (socket) => {
             p.active = false;
             
             // Spawn food from body (10% of segments)
+            console.log('Path history length on death for', p.name, ':', p.pathHistory ? p.pathHistory.length : 'undefined');
             if (p.pathHistory && p.pathHistory.length > 0) {
                 const numOrbs = Math.floor(p.pathHistory.length * 0.1);
                 const spaceLeft = MAX_FOODS - foods.length;
