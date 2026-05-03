@@ -282,9 +282,17 @@ function update() {
     camera.x = head.x - canvas.width / 2;
     camera.y = head.y - canvas.height / 2;
     
-    pathHistory.unshift({ x: head.x, y: head.y });
-    if (pathHistory.length > snakeLength * spacingIndexDiff) {
-        pathHistory.pop();
+    const lastPart = pathHistory[0];
+    if (lastPart) {
+        const dist = Math.hypot(head.x - lastPart.x, head.y - lastPart.y);
+        if (dist >= gridSize) {
+            pathHistory.unshift({ x: head.x, y: head.y });
+            if (pathHistory.length > snakeLength) {
+                pathHistory.pop();
+            }
+        }
+    } else {
+        pathHistory.unshift({ x: head.x, y: head.y });
     }
     
     // Sync to Server
@@ -560,10 +568,8 @@ function draw() {
     }
 
     // Draw Snake
-    for (let i = 0; i < snakeLength; i++) {
-        const index = i * spacingIndexDiff;
-        if (index >= pathHistory.length) break;
-        const part = pathHistory[index];
+    for (let i = 0; i < pathHistory.length; i++) {
+        const part = pathHistory[i];
         const isHead = i === 0;
         const centerX = part.x;
         const centerY = part.y;
