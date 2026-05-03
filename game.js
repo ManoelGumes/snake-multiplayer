@@ -14,8 +14,8 @@ const leaderboardListEl = document.getElementById('leaderboard-list');
 
 // Grid and Game Settings
 const gridSize = 20;
-const WORLD_WIDTH = 5000;
-const WORLD_HEIGHT = 5000;
+const WORLD_WIDTH = 2500;
+const WORLD_HEIGHT = 2500;
 let tileCountX = Math.floor(WORLD_WIDTH / gridSize);
 let tileCountY = Math.floor(WORLD_HEIGHT / gridSize);
 let camera = { x: 0, y: 0 };
@@ -28,9 +28,6 @@ function resizeCanvas() {
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight - headerHeight - footerHeight;
-    
-    tileCountX = Math.max(1, Math.floor(canvas.width / gridSize));
-    tileCountY = Math.max(1, Math.floor(canvas.height / gridSize));
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
@@ -137,6 +134,28 @@ function setupListeners() {
         startMultiBtn.addEventListener('click', () => { console.log('Multi clicked'); gameMode = 'multi'; startGame(); });
     } else {
         console.error('start-multi-btn not found!');
+    }
+    
+    const ctrlUp = document.getElementById('ctrl-up');
+    const ctrlDown = document.getElementById('ctrl-down');
+    const ctrlLeft = document.getElementById('ctrl-left');
+    const ctrlRight = document.getElementById('ctrl-right');
+    
+    if (ctrlUp) {
+        ctrlUp.addEventListener('touchstart', (e) => { e.preventDefault(); if (velocity.y === 0) nextVelocity = { x: 0, y: -baseSpeed }; });
+        ctrlUp.addEventListener('click', () => { if (velocity.y === 0) nextVelocity = { x: 0, y: -baseSpeed }; });
+    }
+    if (ctrlDown) {
+        ctrlDown.addEventListener('touchstart', (e) => { e.preventDefault(); if (velocity.y === 0) nextVelocity = { x: 0, y: baseSpeed }; });
+        ctrlDown.addEventListener('click', () => { if (velocity.y === 0) nextVelocity = { x: 0, y: baseSpeed }; });
+    }
+    if (ctrlLeft) {
+        ctrlLeft.addEventListener('touchstart', (e) => { e.preventDefault(); if (velocity.x === 0) nextVelocity = { x: -baseSpeed, y: 0 }; });
+        ctrlLeft.addEventListener('click', () => { if (velocity.x === 0) nextVelocity = { x: -baseSpeed, y: 0 }; });
+    }
+    if (ctrlRight) {
+        ctrlRight.addEventListener('touchstart', (e) => { e.preventDefault(); if (velocity.x === 0) nextVelocity = { x: baseSpeed, y: 0 }; });
+        ctrlRight.addEventListener('click', () => { if (velocity.x === 0) nextVelocity = { x: baseSpeed, y: 0 }; });
     }
     
     loadLeaderboard();
