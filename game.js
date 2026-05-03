@@ -64,11 +64,13 @@ function initMultiplayer() {
         players = data.players;
         foods = data.foods;
         myPlayerId = socket.id; // Set my ID!
+        updatePlayerCount();
     });
 
     socket.on('playerJoined', (player) => {
         console.log('Player joined:', player.id);
         players[player.id] = player;
+        updatePlayerCount();
     });
 
     socket.on('update', (player) => {
@@ -82,6 +84,7 @@ function initMultiplayer() {
     socket.on('playerLeft', (id) => {
         console.log('Player left:', id);
         delete players[id];
+        updatePlayerCount();
     });
 }
 
@@ -246,6 +249,7 @@ function resetGame() {
         generateFood(i);
     }
     generateObstacles();
+    updatePlayerCount();
 }
 
 function update() {
@@ -761,4 +765,16 @@ function loadLeaderboard() {
             listEl.appendChild(li);
         });
     });
+}
+
+function updatePlayerCount() {
+    const playerCountEl = document.getElementById('player-count');
+    if (playerCountEl) {
+        if (gameMode === 'solo') {
+            playerCountEl.textContent = '01';
+        } else {
+            const count = Object.keys(players).length;
+            playerCountEl.textContent = String(count).padStart(2, '0');
+        }
+    }
 }
