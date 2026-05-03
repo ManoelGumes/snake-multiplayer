@@ -64,6 +64,9 @@ function initMultiplayer() {
         console.log('Connected to server. Initial state received.');
         players = data.players;
         foods = data.foods;
+        if (foods) {
+            foods.forEach(f => { if (f) f.spawnTime = Date.now(); });
+        }
         myPlayerId = socket.id; // Set my ID!
         updatePlayerCount();
     });
@@ -87,6 +90,9 @@ function initMultiplayer() {
     });
 
     socket.on('newFoods', (newFoods) => {
+        if (newFoods) {
+            newFoods.forEach(f => { if (f) f.spawnTime = Date.now(); });
+        }
         foods = newFoods;
     });
 
@@ -434,9 +440,18 @@ function draw() {
     if (foods) {
         foods.forEach(foodItem => {
             if (!foodItem) return;
+            
             const foodCenterX = foodItem.x * gridSize + gridSize / 2;
             const foodCenterY = foodItem.y * gridSize + gridSize / 2;
             const foodRadius = gridSize / 2 - 3;
+            
+            // Fade in animation
+            const elapsed = Date.now() - (foodItem.spawnTime || 0);
+            const alpha = Math.min(elapsed / 500, 1); // Fade in over 500ms
+            
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            
             ctx.shadowColor = COLORS.food;
             ctx.beginPath();
             ctx.arc(foodCenterX, foodCenterY, foodRadius, 0, Math.PI * 2);
@@ -446,6 +461,8 @@ function draw() {
             foodGradient.addColorStop(1, COLORS.food);
             ctx.fillStyle = foodGradient;
             ctx.fill();
+            
+            ctx.restore();
         });
     }
 
@@ -668,7 +685,23 @@ function handleKeyDown(e) {
             break;
         case ' ': e.preventDefault(); break;
         case 'Enter': e.preventDefault(); break;
+        case 'Escape': case 'Esc':
+            returnToHome();
+            break;
     }
+}
+
+function returnToHome() {
+    isGameOver = true;
+    const overlayEl = document.getElementById('overlay');
+    const overlayTitleEl = document.getElementById('overlay-title');
+    const overlayMessageEl = document.getElementById('overlay-message');
+    const startSoloBtn = document.getElementById('start-solo-btn');
+    
+    if (overlayEl) overlayEl.classList.add('visible');
+    if (overlayTitleEl) overlayTitleEl.textContent = "NEON SNAKE";
+    if (overlayMessageEl) overlayMessageEl.textContent = "Digite seu nome para entrar no ranking.";
+    if (startSoloBtn) startSoloBtn.textContent = "JOGAR SOLO";
 }
 
 function generateFood(index = 0) {
@@ -681,7 +714,7 @@ function generateFood(index = 0) {
 }
 
 function generateObstacles() {
-    const numObstacles = 50;
+    const numObstacles = 30;
     for (let i = 0; i < numObstacles; i++) {
         const obs = {
             x: Math.floor(Math.random() * (tileCountX - 2)) + 1,
