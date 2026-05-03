@@ -83,7 +83,23 @@ io.on('connection', (socket) => {
     socket.on('playerDied', () => {
         console.log('Player died:', socket.id);
         if (players[socket.id]) {
-            players[socket.id].active = false;
+            const p = players[socket.id];
+            p.active = false;
+            
+            // Spawn food from body (50% of segments)
+            if (p.pathHistory && p.pathHistory.length > 0) {
+                const numOrbs = Math.floor(p.pathHistory.length * 0.5);
+                for (let i = 0; i < numOrbs; i++) {
+                    const segmentIndex = Math.floor(Math.random() * p.pathHistory.length);
+                    const segment = p.pathHistory[segmentIndex];
+                    
+                    const foodGridX = Math.floor(segment.x / gridSize);
+                    const foodGridY = Math.floor(segment.y / gridSize);
+                    
+                    foods.push({ x: foodGridX, y: foodGridY });
+                }
+                io.emit('newFoods', foods); // Send updated food list
+            }
             
             let winner = null;
             for (let id in players) {
