@@ -104,6 +104,18 @@ function initMultiplayer() {
         delete players[id];
         updatePlayerCount();
     });
+
+    socket.on('gameOver', (data) => {
+        console.log('Game Over received. Winner:', data.winner);
+        isGameOver = true;
+        const overlayEl = document.getElementById('overlay');
+        const overlayTitleEl = document.getElementById('overlay-title');
+        const overlayMessageEl = document.getElementById('overlay-message');
+        
+        if (overlayEl) overlayEl.classList.add('visible');
+        if (overlayTitleEl) overlayTitleEl.textContent = "FIM DE JOGO";
+        if (overlayMessageEl) overlayMessageEl.textContent = `Vencedor: ${data.winner}`;
+    });
 }
 
 // Game State
