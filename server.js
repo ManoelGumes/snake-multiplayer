@@ -41,7 +41,8 @@ let foods = [];
 for (let i = 0; i < 50; i++) {
     foods.push({
         x: Math.floor(Math.random() * tileCountX),
-        y: Math.floor(Math.random() * tileCountY)
+        y: Math.floor(Math.random() * tileCountY),
+        spawnTime: Date.now()
     });
 }
 
@@ -101,7 +102,7 @@ io.on('connection', (socket) => {
                     const foodGridX = Math.floor(segment.x / gridSize);
                     const foodGridY = Math.floor(segment.y / gridSize);
                     
-                    foods.push({ x: foodGridX, y: foodGridY });
+                    foods.push({ x: foodGridX, y: foodGridY, spawnTime: Date.now() });
                 }
                 io.emit('newFoods', foods); // Send updated food list
             }
@@ -123,7 +124,8 @@ io.on('connection', (socket) => {
         if (foods[index]) {
             foods[index] = {
                 x: Math.floor(Math.random() * tileCountX),
-                y: Math.floor(Math.random() * tileCountY)
+                y: Math.floor(Math.random() * tileCountY),
+                spawnTime: Date.now()
             };
             io.emit('newFoods', foods);
         }

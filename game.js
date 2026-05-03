@@ -64,9 +64,6 @@ function initMultiplayer() {
         console.log('Connected to server. Initial state received.');
         players = data.players;
         foods = data.foods;
-        if (foods) {
-            foods.forEach(f => { if (f) f.spawnTime = Date.now(); });
-        }
         myPlayerId = socket.id; // Set my ID!
         updatePlayerCount();
     });
@@ -90,9 +87,6 @@ function initMultiplayer() {
     });
 
     socket.on('newFoods', (newFoods) => {
-        if (newFoods) {
-            newFoods.forEach(f => { if (f) f.spawnTime = Date.now(); });
-        }
         foods = newFoods;
     });
 
