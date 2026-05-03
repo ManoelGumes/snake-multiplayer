@@ -594,6 +594,37 @@ function draw() {
     }
     
     ctx.restore(); // Restore for UI
+    
+    // Draw Mini-map
+    const mapSize = 100;
+    const mapX = canvas.width - mapSize - 20;
+    const mapY = canvas.height - mapSize - 20;
+    
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect(mapX, mapY, mapSize, mapSize);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.strokeRect(mapX, mapY, mapSize, mapSize);
+    
+    // Draw local player dot
+    const localX = mapX + (head.x / WORLD_WIDTH) * mapSize;
+    const localY = mapY + (head.y / WORLD_HEIGHT) * mapSize;
+    ctx.fillStyle = COLORS.snake;
+    ctx.beginPath();
+    ctx.arc(localX, localY, 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Draw other players dots
+    for (let id in players) {
+        const p = players[id];
+        if (!p.active || !p.head) continue;
+        const otherX = mapX + (p.head.x / WORLD_WIDTH) * mapSize;
+        const otherY = mapY + (p.head.y / WORLD_HEIGHT) * mapSize;
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(otherX, otherY, 2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
     ctx.shadowBlur = 0;
 }
 
@@ -669,7 +700,8 @@ function updateScore() {
 }
 
 function checkSpeedProgression() {
-    const newLevel = Math.floor(score / 50) + 1;
+    const maxLevel = 5; // Max speed at 20 foods (200 points)
+    const newLevel = Math.min(Math.floor(score / 50) + 1, maxLevel);
     if (newLevel > speedLevel) {
         speedLevel = newLevel;
         baseSpeed = 1.5 + (speedLevel - 1) * 0.2;

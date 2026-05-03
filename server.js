@@ -35,6 +35,7 @@ let players = {};
 const gridSize = 20;
 const tileCountX = 125; // For 2500x2500 world
 const tileCountY = 125;
+const MAX_FOODS = 100;
 
 let foods = [];
 for (let i = 0; i < 50; i++) {
@@ -89,7 +90,10 @@ io.on('connection', (socket) => {
             // Spawn food from body (10% of segments)
             if (p.pathHistory && p.pathHistory.length > 0) {
                 const numOrbs = Math.floor(p.pathHistory.length * 0.1);
-                for (let i = 0; i < numOrbs; i++) {
+                const spaceLeft = MAX_FOODS - foods.length;
+                const orbsToSpawn = Math.min(numOrbs, spaceLeft);
+                
+                for (let i = 0; i < orbsToSpawn; i++) {
                     const segmentIndex = Math.floor(Math.random() * p.pathHistory.length);
                     const segment = p.pathHistory[segmentIndex];
                     
