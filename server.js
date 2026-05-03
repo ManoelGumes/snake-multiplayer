@@ -32,6 +32,10 @@ app.get('/firebase-config.js', (req, res) => {
 });
 
 let players = {};
+const gridSize = 20;
+const tileCountX = 125; // For 2500x2500 world
+const tileCountY = 125;
+
 let foods = [];
 for (let i = 0; i < 50; i++) {
     foods.push({
@@ -39,9 +43,6 @@ for (let i = 0; i < 50; i++) {
         y: Math.floor(Math.random() * tileCountY)
     });
 }
-const gridSize = 20;
-const tileCountX = 20;
-const tileCountY = 20;
 
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
