@@ -679,6 +679,11 @@ function checkSpeedProgression() {
 
 function triggerGameOver() {
     isGameOver = true;
+    
+    if (gameMode === 'multi' && socket) {
+        socket.emit('playerDied');
+    }
+    
     overlayTitleEl.textContent = "GAME OVER";
     overlayMessageEl.textContent = `${usernameInputEl.value.trim()}, sua pontuação foi ${score}.`;
     startSoloBtn.textContent = "JOGAR NOVAMENTE";
